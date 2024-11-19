@@ -12,10 +12,10 @@ using System.Security.Policy;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
-using SystemBolagetWebScraper.Model;
+using SystembolagetWebScraper.Model;
 using System.Collections.ObjectModel;
 
-namespace SystemBolagetWebScraper
+namespace SystembolagetWebScraper
 {
     internal class WebScraper
     {

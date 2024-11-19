@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SystemBolagetWebScraper.Model
+namespace SystembolagetWebScraper.Model
 {
     internal class Product
     {

@@ -8,9 +8,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using SystemBolagetWebScraper.ViewModel;
+using SystembolagetWebScraper.ViewModel;
 
-namespace SystemBolagetWebScraper
+namespace SystembolagetWebScraper
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
