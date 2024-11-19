@@ -20,9 +20,9 @@ namespace SystembolagetWebScraper
     internal class WebScraper
     {
         private static string productEnclosingClassName = "css-145u7id e1qhsejf0";
-        private static string productNameClassName = "css-1i86311 e1iq8b8k0";
-        private static string productPriceClassName = "css-1k0oafj eqfj59s0";
-        private static string productCountryVolumeAlcoholClassName = "css-e42h23 e1g7jmpl0";
+        private static string productNameClassName = "css-1njx6qf e1iq8b8k0";
+        private static string productPriceClassName = "css-a2frwy eqfj59s0";
+        private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
         private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
@@ -53,32 +53,29 @@ namespace SystembolagetWebScraper
                         IWebElement acceptCookiesButton = wait.Until(d => d.FindElement(By.XPath("//button[contains(text(), 'acceptera')]")));
                         acceptCookiesButton.Click();
 
-                        while (true)
+                        for (int i = 1; i < 856; i++)
                         {
-                            for (int i = 1; i < 30; i++)
+                            driver.Navigate().GoToUrl(url + i.ToString());
+                            wait.Until(d => d.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']")).Count > 0);
+
+                            var productElements = driver.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']"));
+
+                            foreach (var element in productElements)
                             {
-                                driver.Navigate().GoToUrl(url + i.ToString());
-                                wait.Until(d => d.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']")).Count > 0);
+                                var countryVolumeAlcoholElements = element.FindElements(By.XPath($".//p[@class='{productCountryVolumeAlcoholClassName}']"));
 
-                                var productElements = driver.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']"));
+                                var product = new Product(
+                                    element.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text,
+                                    Single.Parse(RemoveWhitespace(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text.Split(':')[0])),
+                                    countryVolumeAlcoholElements[0].Text,
+                                    GetVolume(countryVolumeAlcoholElements[1].Text),
+                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0].Replace(',', '.'))
+                                );
 
-                                foreach (var element in productElements)
+                                Application.Current.Dispatcher.Invoke(() =>
                                 {
-                                    var countryVolumeAlcoholElements = element.FindElements(By.XPath($".//p[@class='{productCountryVolumeAlcoholClassName}']"));
-
-                                    var product = new Product(
-                                        element.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text,
-                                        Single.Parse(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text.Split(':')[0]),
-                                        countryVolumeAlcoholElements[0].Text,
-                                        GetVolume(countryVolumeAlcoholElements[1].Text),
-                                        Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0].Replace(',', '.'))
-                                    );
-
-                                    Application.Current.Dispatcher.Invoke(() =>
-                                    {
-                                        Products.Add(product);
-                                    });
-                                }
+                                    Products.Add(product);
+                                });
                             }
                         }
                     }
