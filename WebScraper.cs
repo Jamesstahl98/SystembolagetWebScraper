@@ -23,8 +23,7 @@ namespace SystemBolagetWebScraper
         private static string productNameClassName = "css-1i86311 e1iq8b8k0";
         private static string productPriceClassName = "css-1k0oafj eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-e42h23 e1g7jmpl0";
-        private static string acceptCookiesButtonClassName = "css-zja7fg ecpbukt0";
-        string _url = "https://www.systembolaget.se/sortiment/?p=";
+        private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
         public string Url => _url;
@@ -39,7 +38,6 @@ namespace SystemBolagetWebScraper
         {
             await Task.Run(() =>
             {
-
                 try
                 {
                     var options = new ChromeOptions();

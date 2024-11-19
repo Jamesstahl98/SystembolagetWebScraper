@@ -5,8 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SystemBolagetWebScraper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="800" Width="1500">
     <Grid>
-        <ListBox ItemsSource="{Binding Products}"/>
+        <ListBox ItemsSource="{Binding Products}" HorizontalAlignment="Left" VerticalAlignment="Top" Width="750" Height="800">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Name}" Margin="5" Width="130"/>
+                        <TextBlock Text="{Binding Country}" Margin="5" Width="100"/>
+                        <TextBlock Text="{Binding Volume}" Margin="5" Width="100"/>
+                        <TextBlock Text="{Binding Alcohol}" Margin="5" Width="100"/>
+                        <TextBlock Text="{Binding Price}" Margin="5" Width="100"/>
+                        <TextBlock Text="{Binding APK}" Margin="5" Width="100"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Window>
