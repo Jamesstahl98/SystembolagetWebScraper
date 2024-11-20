@@ -66,10 +66,10 @@ namespace SystembolagetWebScraper
 
                                 var product = new Product(
                                     element.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text,
-                                    Single.Parse(RemoveWhitespace(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text.Split(':')[0])),
+                                    GetPrice(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
                                     GetVolume(countryVolumeAlcoholElements[1].Text),
-                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0].Replace(',', '.'))
+                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0])
                                 );
 
                                 Application.Current.Dispatcher.Invoke(() =>
@@ -102,6 +102,18 @@ namespace SystembolagetWebScraper
             else
             {
                 return Int32.Parse(RemoveWhitespace(volumeString.Split('m')[0]));
+            }
+        }
+
+        public static float GetPrice(string priceString)
+        {
+            if (priceString.Contains(':'))
+            {
+                return Single.Parse(RemoveWhitespace(priceString.Split(':')[0]));
+            }
+            else
+            {
+                return Single.Parse(RemoveWhitespace(priceString.Split('*')[0]));
             }
         }
     }
