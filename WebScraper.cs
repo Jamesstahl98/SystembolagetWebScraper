@@ -92,8 +92,12 @@ namespace SystembolagetWebScraper
             });
         }
 
-        public static string GetImageSource(IWebElement imageElement)
+        public static string? GetImageSource(IWebElement imageElement)
         {
+            if (imageElement.GetAttribute("srcset")[0] == '/')
+            {
+                return null;
+            }
             return imageElement.GetAttribute("srcset").Split(' ')[0];
         }
 
