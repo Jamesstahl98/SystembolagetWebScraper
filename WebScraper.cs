@@ -21,7 +21,8 @@ namespace SystembolagetWebScraper
     internal class WebScraper
     {
         private static string productEnclosingClassName = "css-145u7id e1qhsejf0";
-        private static string productNameClassName = "css-1njx6qf e1iq8b8k0";
+        private static string brandNameClassName = "css-1njx6qf e1iq8b8k0";
+        private static string productNameClassName = "css-1hdv0wt e1iq8b8k0";
         private static string productPriceClassName = "css-a2frwy eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
         private static string imageSource = "css-g98gbd e1ydxtsp0";
@@ -69,12 +70,14 @@ namespace SystembolagetWebScraper
                                 var countryVolumeAlcoholElements = element.FindElements(By.XPath($".//p[@class='{productCountryVolumeAlcoholClassName}']"));
 
                                 var product = new Product(
-                                    element.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text,
+                                    element.FindElement(By.XPath($".//p[@class='{brandNameClassName}']")).Text,
+                                    GetProductName(element),
                                     GetPrice(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
                                     GetVolume(countryVolumeAlcoholElements[1].Text),
                                     Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0]),
-                                    GetImageSource(element.FindElement(By.XPath($".//img[@class='{imageSource}']")))
+                                    GetImageSource(element.FindElement(By.XPath($".//img[@class='{imageSource}']"))),
+                                    element.GetAttribute("href")
                                 );
 
                                 Application.Current.Dispatcher.Invoke(() =>
@@ -90,6 +93,18 @@ namespace SystembolagetWebScraper
                     Console.WriteLine($"Error: {ex.Message}");
                 }
             });
+        }
+
+        public static string? GetProductName(IWebElement productElement)
+        {
+            try
+            {
+                return productElement.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static string? GetImageSource(IWebElement imageElement)

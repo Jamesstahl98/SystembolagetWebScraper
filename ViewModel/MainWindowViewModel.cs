@@ -32,8 +32,8 @@ namespace SystembolagetWebScraper.ViewModel
 
         public ObservableCollection<string> SortOptions { get; } = new ObservableCollection<string>
     {
-        "Name (Ascending)",
-        "Name (Descending)",
+        "Brand Name (Ascending)",
+        "Brand Name (Descending)",
         "Country (Ascending)",
         "Country (Descending)",
         "Volume (Ascending)",
@@ -68,7 +68,6 @@ namespace SystembolagetWebScraper.ViewModel
             set
             {
                 _activeProduct = value;
-                Debug.WriteLine(ActiveProduct);
                 RaisePropertyChanged();
             }
         }
@@ -88,11 +87,11 @@ namespace SystembolagetWebScraper.ViewModel
 
             switch (SelectedSortOption)
             {
-                case "Name (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
+                case "Brand Name (Ascending)":
+                    ProductsView.SortDescriptions.Add(new SortDescription("BrandName", ListSortDirection.Ascending));
                     break;
-                case "Name (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Descending));
+                case "Brand Name (Descending)":
+                    ProductsView.SortDescriptions.Add(new SortDescription("BrandName", ListSortDirection.Descending));
                     break;
                 case "Country (Ascending)":
                     ProductsView.SortDescriptions.Add(new SortDescription("Country", ListSortDirection.Ascending));

@@ -41,7 +41,7 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Name" Grid.Column="0" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
+            <TextBlock Text="Brand Name" Grid.Column="0" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
             <TextBlock Text="Country" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
             <TextBlock Text="Volume" Grid.Column="2" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
             <TextBlock Text="Alcohol" Grid.Column="3" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
@@ -64,7 +64,7 @@
                                 <ColumnDefinition Width="100"/>
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="5"/>
+                            <TextBlock Text="{Binding BrandName}" Grid.Column="0" Margin="5"/>
                             <TextBlock Text="{Binding Country}" Grid.Column="1" Margin="5"/>
                             <TextBlock Text="{Binding Volume}" Grid.Column="2" Margin="5"/>
                             <TextBlock Text="{Binding Alcohol}" Grid.Column="3" Margin="5"/>
@@ -79,6 +79,7 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <DockPanel Grid.Column="1">
@@ -88,10 +89,22 @@
                        Width="53"
                        Height="104"
                        Margin="40,40"/>
-                <Label Content="{Binding ActiveProduct.Name}"
-                       VerticalAlignment="Center"
-                       FontSize="20"/>
+                <StackPanel VerticalAlignment="Center">
+                    <Label Content="{Binding ActiveProduct.BrandName}"
+                           FontSize="20"/>
+                    <Label Content="{Binding ActiveProduct.ProductName}"
+                           FontSize="16"/>
+                </StackPanel>
             </DockPanel>
+            <Separator Grid.Row="1"
+                       Margin="20,20"/>
+            <StackPanel Grid.Row="2">
+                <TextBlock HorizontalAlignment="Center">
+                    <Hyperlink NavigateUri="{Binding ActiveProduct.ProductURL}" RequestNavigate="Hyperlink_RequestNavigate">
+                        <TextBlock Text="{Binding ActiveProduct.ProductURL}" />
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>

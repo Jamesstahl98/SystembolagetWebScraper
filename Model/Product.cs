@@ -9,22 +9,26 @@ namespace SystembolagetWebScraper.Model
 {
     internal class Product
     {
-        public string Name { get; set; }
+        public string BrandName { get; set; }
+        public string? ProductName { get; set; }
         public float Price { get; set; }
         public string Country { get; set; }
         public int Volume { get; set; }
         public float Alcohol { get; set; }
         public float APK { get => (Alcohol/100)*Volume/Price; }
         public string ImageSource { get; set; }
+        public string ProductURL { get; set; }
 
-        public Product(string name, float price, string country, int volume, float alcohol, string imageSource)
+        public Product(string brandName, string? productName, float price, string country, int volume, float alcohol, string imageSource, string productURL)
         {
-            Name = name;
+            BrandName = brandName;
+            ProductName = productName;
             Price = price;
             Country = country;
             Volume = volume;
             Alcohol = alcohol;
             ImageSource = imageSource;
+            ProductURL = productURL;
         }
     }
 }
