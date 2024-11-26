@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -16,10 +17,39 @@ namespace SystembolagetWebScraper.ViewModel
     internal class MainWindowViewModel : ViewModelBase
     {
         private WebScraper webScraper;
+        private string _selectedSortOption;
+        private HashSet<string> _uniqueCountries = new HashSet<string>();
+        private string _selectedFilterOption;
+        private ICollectionView _productsView;
+        private Product? _activeProduct;
+
+        private ObservableCollection<string> _filterOptions;
+        public ObservableCollection<string> FilterOptions
+        {
+            get => _filterOptions;
+            set
+            {
+                _filterOptions = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string SelectedFilterOption
+        {
+            get => _selectedFilterOption;
+            set
+            {
+                if (_selectedFilterOption != value)
+                {
+                    _selectedFilterOption = value;
+                    RaisePropertyChanged();
+                    ApplyFilter();
+                }
+            }
+        }
 
         public ObservableCollection<Product> Products { get => WebScraper.Products; }
 
-        private ICollectionView _productsView;
         public ICollectionView ProductsView
         {
             get => _productsView;
@@ -31,22 +61,20 @@ namespace SystembolagetWebScraper.ViewModel
         }
 
         public ObservableCollection<string> SortOptions { get; } = new ObservableCollection<string>
-    {
-        "Brand Name (Ascending)",
-        "Brand Name (Descending)",
-        "Country (Ascending)",
-        "Country (Descending)",
-        "Volume (Ascending)",
-        "Volume (Descending)",
-        "Alcohol (Ascending)",
-        "Alcohol (Descending)",
-        "Price (Ascending)",
-        "Price (Descending)",
-        "APK (Ascending)",
-        "APK (Descending)"
-    };
-
-        private string _selectedSortOption;
+        {
+            "Brand Name (Ascending)",
+            "Brand Name (Descending)",
+            "Country (Ascending)",
+            "Country (Descending)",
+            "Volume (Ascending)",
+            "Volume (Descending)",
+            "Alcohol (Ascending)",
+            "Alcohol (Descending)",
+            "Price (Ascending)",
+            "Price (Descending)",
+            "APK (Ascending)",
+            "APK (Descending)"
+        };
         public string SelectedSortOption
         {
             get => _selectedSortOption;
@@ -60,8 +88,6 @@ namespace SystembolagetWebScraper.ViewModel
                 }
             }
         }
-
-        private Product? _activeProduct;
         public Product? ActiveProduct
         {
             get => _activeProduct;
@@ -76,7 +102,13 @@ namespace SystembolagetWebScraper.ViewModel
         {
             webScraper = new WebScraper();
             ProductsView = CollectionViewSource.GetDefaultView(Products);
+
+            PopulateFilterOptions();
+
+            Products.CollectionChanged += OnProductsCollectionChanged;
+
             SelectedSortOption = SortOptions[0];
+            SelectedFilterOption = FilterOptions[0];
         }
 
         private void ApplySort()
@@ -124,6 +156,47 @@ namespace SystembolagetWebScraper.ViewModel
                     ProductsView.SortDescriptions.Add(new SortDescription("APK", ListSortDirection.Descending));
                     break;
             }
+        }
+        private void ApplyFilter()
+        {
+            ProductsView.Filter = item =>
+            {
+                if (item is Product product)
+                {
+                    if (SelectedFilterOption == "All")
+                        return true;
+                    return product.Country == SelectedFilterOption;
+                }
+                return false;
+            };
+        }
+
+        private void OnProductsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Product newProduct in e.NewItems)
+                    _uniqueCountries.Add(newProduct.Country);
+            }
+
+            if (e.OldItems != null)
+            {
+                foreach (Product oldProduct in e.OldItems)
+                {
+                    if (Products.All(p => p.Country != oldProduct.Country))
+                        _uniqueCountries.Remove(oldProduct.Country);
+                }
+            }
+
+            PopulateFilterOptions();
+        }
+
+        private void PopulateFilterOptions()
+        {
+            var options = new List<string> { "All" };
+            options.AddRange(_uniqueCountries.OrderBy(c => c));
+
+            FilterOptions = new ObservableCollection<string>(options);
         }
     }
 }

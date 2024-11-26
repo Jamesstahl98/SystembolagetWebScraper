@@ -26,12 +26,21 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ComboBox Width="200" Height="30" Margin="10"
-                  Grid.Row="0"
-                  ItemsSource="{Binding SortOptions}" 
-                  SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" />
+            <DockPanel Grid.Row="0"
+                       Width="Auto" Height="30"
+                       HorizontalAlignment="Center"
+                       Margin="10">
+                <ComboBox Width="250"
+                          Margin="20,0"
+                          ItemsSource="{Binding SortOptions}" 
+                          SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" />
+                <ComboBox Width="250"
+                          Margin="20,0"
+                          ItemsSource="{Binding FilterOptions}" 
+                          SelectedItem="{Binding SelectedFilterOption, Mode=TwoWay}"/>
+            </DockPanel>
 
-        <Grid Grid.Row="1">
+            <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="130"/>
                 <ColumnDefinition Width="100"/>
