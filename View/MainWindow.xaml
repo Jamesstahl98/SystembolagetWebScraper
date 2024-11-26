@@ -14,18 +14,21 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <ComboBox Width="200" Height="30" Margin="10"
-                  Grid.Column="0"
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ComboBox Width="200" Height="30" Margin="10"
                   Grid.Row="0"
                   ItemsSource="{Binding SortOptions}" 
                   SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" />
 
-        <Grid Grid.Column="0" Grid.Row="1">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="130"/>
                 <ColumnDefinition Width="100"/>
@@ -43,30 +46,44 @@
             <TextBlock Text="APK" Grid.Column="5" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
         </Grid>
 
-        <ListBox ItemsSource="{Binding ProductsView}"
-                 Grid.Column="0"
+            <ListBox ItemsSource="{Binding ProductsView}"
+                 SelectedItem="{Binding ActiveProduct}"
                  Grid.Row="2">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="130"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="5"/>
-                        <TextBlock Text="{Binding Country}" Grid.Column="1" Margin="5"/>
-                        <TextBlock Text="{Binding Volume}" Grid.Column="2" Margin="5"/>
-                        <TextBlock Text="{Binding Alcohol}" Grid.Column="3" Margin="5"/>
-                        <TextBlock Text="{Binding Price}" Grid.Column="4" Margin="5"/>
-                        <TextBlock Text="{Binding APK}" Grid.Column="5" Margin="5"/>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            <TextBlock Text="{Binding Name}" Grid.Column="0" Margin="5"/>
+                            <TextBlock Text="{Binding Country}" Grid.Column="1" Margin="5"/>
+                            <TextBlock Text="{Binding Volume}" Grid.Column="2" Margin="5"/>
+                            <TextBlock Text="{Binding Alcohol}" Grid.Column="3" Margin="5"/>
+                            <TextBlock Text="{Binding Price}" Grid.Column="4" Margin="5"/>
+                            <TextBlock Text="{Binding APK}" Grid.Column="5" Margin="5"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image Source="{Binding ActiveProduct.ImageSource}"
+               Grid.Column="1"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Width="53"
+               Height="104"
+               Margin="40,40"/>
+        </Grid>
     </Grid>
 </Window>

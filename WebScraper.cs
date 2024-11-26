@@ -12,6 +12,7 @@ using System.Security.Policy;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using SeleniumExtras.WaitHelpers;
 using SystembolagetWebScraper.Model;
 using System.Collections.ObjectModel;
 
@@ -23,6 +24,7 @@ namespace SystembolagetWebScraper
         private static string productNameClassName = "css-1njx6qf e1iq8b8k0";
         private static string productPriceClassName = "css-a2frwy eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
+        private static string imageSource = "css-g98gbd e1ydxtsp0";
         private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
@@ -47,7 +49,9 @@ namespace SystembolagetWebScraper
                         WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
                         driver.Navigate().GoToUrl(url + "1");
-                        IWebElement ageConfirmationButton = wait.Until(d => d.FindElement(By.XPath("//a[contains(text(), 'fyllt')]")));
+                        IWebElement ageConfirmationButton = wait.Until(ExpectedConditions.ElementToBeClickable(
+                            By.XPath("//a[contains(text(), 'fyllt')]")
+                        ));
                         ageConfirmationButton.Click();
 
                         IWebElement acceptCookiesButton = wait.Until(d => d.FindElement(By.XPath("//button[contains(text(), 'acceptera')]")));
@@ -69,7 +73,8 @@ namespace SystembolagetWebScraper
                                     GetPrice(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
                                     GetVolume(countryVolumeAlcoholElements[1].Text),
-                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0])
+                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0]),
+                                    GetImageSource(element.FindElement(By.XPath($".//img[@class='{imageSource}']")))
                                 );
 
                                 Application.Current.Dispatcher.Invoke(() =>
@@ -86,6 +91,12 @@ namespace SystembolagetWebScraper
                 }
             });
         }
+
+        public static string GetImageSource(IWebElement imageElement)
+        {
+            return imageElement.GetAttribute("srcset").Split(' ')[0];
+        }
+
         public static string RemoveWhitespace(string source)
         {
             return new string(source.Where(c => !char.IsWhiteSpace(c)).ToArray());

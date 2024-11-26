@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using SystembolagetWebScraper.Command;
 using SystembolagetWebScraper.Model;
+using static OpenQA.Selenium.BiDi.Modules.Session.ProxyConfiguration;
 
 namespace SystembolagetWebScraper.ViewModel
 {
@@ -56,6 +58,18 @@ namespace SystembolagetWebScraper.ViewModel
                     RaisePropertyChanged();
                     ApplySort();
                 }
+            }
+        }
+
+        private Product? _activeProduct;
+        public Product? ActiveProduct
+        {
+            get => _activeProduct;
+            set
+            {
+                _activeProduct = value;
+                Debug.WriteLine(ActiveProduct);
+                RaisePropertyChanged();
             }
         }
 

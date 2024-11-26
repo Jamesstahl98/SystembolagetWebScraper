@@ -14,14 +14,16 @@ namespace SystembolagetWebScraper.Model
         public int Volume { get; set; }
         public float Alcohol { get; set; }
         public float APK { get => (Alcohol/100)*Volume/Price; }
+        public string ImageSource { get; set; }
 
-        public Product(string name, float price, string country, int volume, float alcohol)
+        public Product(string name, float price, string country, int volume, float alcohol, string imageSource)
         {
             Name = name;
             Price = price;
             Country = country;
             Volume = volume;
             Alcohol = alcohol;
+            ImageSource = imageSource;
         }
     }
 }
