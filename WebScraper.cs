@@ -15,17 +15,21 @@ using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using SystembolagetWebScraper.Model;
 using System.Collections.ObjectModel;
+using System.Collections;
 
 namespace SystembolagetWebScraper
 {
+    enum ProductType { Beer, Red_Wine, White_Wine, Whiskey, SparklingWine, Cider, Vodka, Liqueur, Other }
     internal class WebScraper
     {
         private static string productEnclosingClassName = "css-145u7id e1qhsejf0";
         private static string brandNameClassName = "css-1njx6qf e1iq8b8k0";
         private static string productNameClassName = "css-1hdv0wt e1iq8b8k0";
+        private static string productTypeClassName = "css-4oiqd8 eqfj59s0";
         private static string productPriceClassName = "css-a2frwy eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
         private static string imageSource = "css-g98gbd e1ydxtsp0";
+        private static ProductType ProductType;
         private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
@@ -69,9 +73,13 @@ namespace SystembolagetWebScraper
                             {
                                 var countryVolumeAlcoholElements = element.FindElements(By.XPath($".//p[@class='{productCountryVolumeAlcoholClassName}']"));
 
+                                string productTypeString = element.FindElement(By.XPath($".//p[@class='{productTypeClassName}']")).Text;
+
                                 var product = new Product(
                                     element.FindElement(By.XPath($".//p[@class='{brandNameClassName}']")).Text,
                                     GetProductName(element),
+                                    productTypeString,
+                                    GetProductType(productTypeString),
                                     GetPrice(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
                                     GetVolume(countryVolumeAlcoholElements[1].Text),
@@ -95,6 +103,43 @@ namespace SystembolagetWebScraper
             });
         }
 
+        public static ProductType GetProductType(string productTypeString)
+        {
+            if (productTypeString.Contains("ÖL"))
+            {
+                return ProductType.Beer;
+            }
+            else if (productTypeString.Contains("VITT VIN"))
+            {
+                return ProductType.White_Wine;
+            }
+            else if (productTypeString.Contains("RÖTT VIN"))
+            {
+                return ProductType.Red_Wine;
+            }
+            else if (productTypeString.Contains("CIDER"))
+            {
+                return ProductType.Cider;
+            }
+            else if (productTypeString.Contains("WHISKY"))
+            {
+                return ProductType.Whiskey;
+            }
+            else if (productTypeString.Contains("MOUSSERANDE"))
+            {
+                return ProductType.SparklingWine;
+            }
+            else if (productTypeString.Contains("LIKÖR"))
+            {
+                return ProductType.Liqueur;
+            }
+            else if (productTypeString.Contains("VODKA"))
+            {
+                return ProductType.Vodka;
+            }
+            return ProductType.Other;
+
+        }
         public static string? GetProductName(IWebElement productElement)
         {
             try

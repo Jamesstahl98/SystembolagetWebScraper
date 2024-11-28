@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:local="clr-namespace:SystembolagetWebScraper"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:converters="clr-namespace:SystembolagetWebScraper.Converters"
@@ -10,6 +11,11 @@
         Title="MainWindow" Height="800" Width="1500">
     <Window.Resources>
         <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter" />
+        <ObjectDataProvider x:Key="EnumValuesProvider" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:ProductType" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -42,9 +48,24 @@
                             <MenuItem.ItemContainerStyle>
                                 <Style TargetType="{x:Type MenuItem}">
                                     <Setter Property="Command" Value="{Binding DataContext.ApplyCountryFilterCommand, 
-                                        RelativeSource={RelativeSource Mode=FindAncestor, 
-                                        AncestorType={x:Type MenuItem}, 
-                                        AncestorLevel=1}}" />
+                                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                                            AncestorType={x:Type MenuItem}, 
+                                            AncestorLevel=1}}" />
+                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
+                        <MenuItem Header="Product Types"
+                                  Command="{Binding ApplyProductTypeFilterCommand}">
+                            <MenuItem.ItemsSource>
+                                <Binding Source="{StaticResource EnumValuesProvider}" />
+                            </MenuItem.ItemsSource>
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="{x:Type MenuItem}">
+                                    <Setter Property="Command" Value="{Binding DataContext.ApplyProductTypeFilterCommand, 
+                                            RelativeSource={RelativeSource Mode=FindAncestor, 
+                                            AncestorType={x:Type MenuItem}, 
+                                            AncestorLevel=1}}" />
                                     <Setter Property="CommandParameter" Value="{Binding}"/>
                                 </Style>
                             </MenuItem.ItemContainerStyle>

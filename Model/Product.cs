@@ -11,6 +11,8 @@ namespace SystembolagetWebScraper.Model
     {
         public string BrandName { get; set; }
         public string? ProductName { get; set; }
+        public string? ProductTypeString { get; set; }
+        public ProductType ProductType { get; set; }
         public float Price { get; set; }
         public string Country { get; set; }
         public int Volume { get; set; }
@@ -19,10 +21,12 @@ namespace SystembolagetWebScraper.Model
         public string ImageSource { get; set; }
         public string ProductURL { get; set; }
 
-        public Product(string brandName, string? productName, float price, string country, int volume, float alcohol, string imageSource, string productURL)
+        public Product(string brandName, string? productName, string? productTypeString, ProductType productType, float price, string country, int volume, float alcohol, string imageSource, string productURL)
         {
             BrandName = brandName;
             ProductName = productName;
+            ProductTypeString = productTypeString;
+            ProductType = productType;
             Price = price;
             Country = country;
             Volume = volume;

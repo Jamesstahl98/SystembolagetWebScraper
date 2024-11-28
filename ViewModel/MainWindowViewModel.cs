@@ -21,6 +21,7 @@ namespace SystembolagetWebScraper.ViewModel
         private ICollectionView _productsView;
         private Product? _activeProduct;
 
+        public ProductType ProductTypes { get; set; }
         public ObservableCollection<Product> Products { get => WebScraper.Products; }
         public ObservableCollection<string> UniqueCountries { get; set; } = new ObservableCollection<string>();
         public ICollectionView ProductsView
@@ -63,6 +64,7 @@ namespace SystembolagetWebScraper.ViewModel
         }
 
         public DelegateCommand ApplyCountryFilterCommand { get; }
+        public DelegateCommand ApplyProductTypeFilterCommand { get; }
 
         public Product? ActiveProduct
         {
@@ -85,6 +87,7 @@ namespace SystembolagetWebScraper.ViewModel
 
             UniqueCountries.Add("All");
             ApplyCountryFilterCommand = new DelegateCommand(ApplyCountryFilter);
+            ApplyProductTypeFilterCommand = new DelegateCommand(ApplyProductTypeFilter);
         }
 
         private void ApplySort()
@@ -157,6 +160,25 @@ namespace SystembolagetWebScraper.ViewModel
                         return true;
 
                     return product.Country == selectedCountry;
+                }
+                return false;
+            };
+
+            ProductsView.Refresh();
+        }
+
+        private void ApplyProductTypeFilter(object obj)
+        {
+            ProductType selectedProductType = (ProductType)obj;
+
+            ProductsView.Filter = item =>
+            {
+                if (item is Product product)
+                {
+                    //if (selectedProductType == "All")
+                    //    return true;
+
+                    return product.ProductType == selectedProductType;
                 }
                 return false;
             };
