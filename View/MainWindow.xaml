@@ -34,10 +34,23 @@
                           Margin="20,0"
                           ItemsSource="{Binding SortOptions}" 
                           SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" />
-                <ComboBox Width="250"
-                          Margin="20,0"
-                          ItemsSource="{Binding FilterOptions}" 
-                          SelectedItem="{Binding SelectedFilterOption, Mode=TwoWay}"/>
+                <Menu>
+                    <MenuItem Header="Filters">
+                        <MenuItem Header="Countries"
+                                  ItemsSource="{Binding UniqueCountries}"
+                                  Command="{Binding ApplyCountryFilterCommand}">
+                            <MenuItem.ItemContainerStyle>
+                                <Style TargetType="{x:Type MenuItem}">
+                                    <Setter Property="Command" Value="{Binding DataContext.ApplyCountryFilterCommand, 
+                                        RelativeSource={RelativeSource Mode=FindAncestor, 
+                                        AncestorType={x:Type MenuItem}, 
+                                        AncestorLevel=1}}" />
+                                    <Setter Property="CommandParameter" Value="{Binding}"/>
+                                </Style>
+                            </MenuItem.ItemContainerStyle>
+                        </MenuItem>
+                    </MenuItem>
+                </Menu>
             </DockPanel>
 
             <Grid Grid.Row="1">

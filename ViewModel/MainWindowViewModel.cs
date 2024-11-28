@@ -18,38 +18,11 @@ namespace SystembolagetWebScraper.ViewModel
     {
         private WebScraper webScraper;
         private string _selectedSortOption;
-        private HashSet<string> _uniqueCountries = new HashSet<string>();
-        private string _selectedFilterOption;
         private ICollectionView _productsView;
         private Product? _activeProduct;
 
-        private ObservableCollection<string> _filterOptions;
-        public ObservableCollection<string> FilterOptions
-        {
-            get => _filterOptions;
-            set
-            {
-                _filterOptions = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string SelectedFilterOption
-        {
-            get => _selectedFilterOption;
-            set
-            {
-                if (_selectedFilterOption != value)
-                {
-                    _selectedFilterOption = value;
-                    RaisePropertyChanged();
-                    ApplyFilter();
-                }
-            }
-        }
-
         public ObservableCollection<Product> Products { get => WebScraper.Products; }
-
+        public ObservableCollection<string> UniqueCountries { get; set; } = new ObservableCollection<string>();
         public ICollectionView ProductsView
         {
             get => _productsView;
@@ -88,6 +61,9 @@ namespace SystembolagetWebScraper.ViewModel
                 }
             }
         }
+
+        public DelegateCommand ApplyCountryFilterCommand { get; }
+
         public Product? ActiveProduct
         {
             get => _activeProduct;
@@ -103,12 +79,12 @@ namespace SystembolagetWebScraper.ViewModel
             webScraper = new WebScraper();
             ProductsView = CollectionViewSource.GetDefaultView(Products);
 
-            PopulateFilterOptions();
-
             Products.CollectionChanged += OnProductsCollectionChanged;
 
             SelectedSortOption = SortOptions[0];
-            SelectedFilterOption = FilterOptions[0];
+
+            UniqueCountries.Add("All");
+            ApplyCountryFilterCommand = new DelegateCommand(ApplyCountryFilter);
         }
 
         private void ApplySort()
@@ -157,46 +133,35 @@ namespace SystembolagetWebScraper.ViewModel
                     break;
             }
         }
-        private void ApplyFilter()
-        {
-            ProductsView.Filter = item =>
-            {
-                if (item is Product product)
-                {
-                    if (SelectedFilterOption == "All")
-                        return true;
-                    return product.Country == SelectedFilterOption;
-                }
-                return false;
-            };
-        }
 
         private void OnProductsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
                 foreach (Product newProduct in e.NewItems)
-                    _uniqueCountries.Add(newProduct.Country);
-            }
-
-            if (e.OldItems != null)
-            {
-                foreach (Product oldProduct in e.OldItems)
                 {
-                    if (Products.All(p => p.Country != oldProduct.Country))
-                        _uniqueCountries.Remove(oldProduct.Country);
+                    if (!UniqueCountries.Contains(newProduct.Country))
+                        UniqueCountries.Add(newProduct.Country);
                 }
             }
-
-            PopulateFilterOptions();
         }
-
-        private void PopulateFilterOptions()
+        private void ApplyCountryFilter(object obj)
         {
-            var options = new List<string> { "All" };
-            options.AddRange(_uniqueCountries.OrderBy(c => c));
+            string selectedCountry = obj as string;
 
-            FilterOptions = new ObservableCollection<string>(options);
+            ProductsView.Filter = item =>
+            {
+                if (item is Product product)
+                {
+                    if (selectedCountry == "All")
+                        return true;
+
+                    return product.Country == selectedCountry;
+                }
+                return false;
+            };
+
+            ProductsView.Refresh();
         }
     }
 }
