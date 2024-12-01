@@ -28,12 +28,14 @@ namespace SystembolagetWebScraper
         private static string productTypeClassName = "css-4oiqd8 eqfj59s0";
         private static string productPriceClassName = "css-a2frwy eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
-        private static string imageSource = "css-g98gbd e1ydxtsp0";
+        private static string imageSourceClassName = "css-g98gbd e1ydxtsp0";
+        private static string productNumberClassName = "css-su700l e1iq8b8k0";
         private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
         public string Url => _url;
         public static ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
+        public static HashSet<string> productNumbers = new HashSet<string>();
 
         public async Task InitializeAsync()
         {
@@ -63,7 +65,6 @@ namespace SystembolagetWebScraper
 
                         for (int i = 1; i < 856; i++)
                         {
-                            Debug.WriteLine(i);
                             driver.Navigate().GoToUrl(url + i.ToString());
                             wait.Until(d => d.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']")).Count > 0);
 
@@ -71,6 +72,15 @@ namespace SystembolagetWebScraper
 
                             foreach (var element in productElements)
                             {
+                                string productNumber = element.FindElement(By.XPath($".//p[@class='{productNumberClassName}']")).Text;
+
+                                if(productNumbers.Contains(productNumber))
+                                {
+                                    continue;
+                                }
+
+                                productNumbers.Add(productNumber);
+
                                 var countryVolumeAlcoholElements = element.FindElements(By.XPath($".//p[@class='{productCountryVolumeAlcoholClassName}']"));
 
                                 string productTypeString = element.FindElement(By.XPath($".//p[@class='{productTypeClassName}']")).Text;
@@ -84,7 +94,7 @@ namespace SystembolagetWebScraper
                                     countryVolumeAlcoholElements[0].Text,
                                     await GetVolume(countryVolumeAlcoholElements[1].Text),
                                     Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0]),
-                                    await GetImageSourceAsync(element.FindElement(By.XPath($".//img[@class='{imageSource}']"))),
+                                    await GetImageSourceAsync(element.FindElement(By.XPath($".//img[@class='{imageSourceClassName}']"))),
                                     element.GetAttribute("href")
                                 );
 
