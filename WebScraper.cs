@@ -63,6 +63,7 @@ namespace SystembolagetWebScraper
 
                         for (int i = 1; i < 856; i++)
                         {
+                            Debug.WriteLine(i);
                             driver.Navigate().GoToUrl(url + i.ToString());
                             wait.Until(d => d.FindElements(By.XPath($"//a[@class='{productEnclosingClassName}']")).Count > 0);
 
@@ -143,19 +144,11 @@ namespace SystembolagetWebScraper
         }
         static async Task<string?> GetProductNameAsync(IWebElement productElement)
         {
-            await Task.Run(()
-                =>
+            var bla = await Task.Run(() => productElement.FindElements(By.XPath($".//p[@class='{productNameClassName}']")));
+            if (bla.Count > 0)
             {
-                try
-                {
-                    var element = productElement.FindElement(By.XPath($".//p[@class='{productNameClassName}']"));
-                    return element.Text;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+                return bla[0].Text;
+            }
             return null;
         }
 
@@ -183,7 +176,9 @@ namespace SystembolagetWebScraper
 
         static async Task<int> GetVolume(string volumeString)
         {
-            if (volumeString.Contains("flaskor"))
+            if (volumeString.Contains("flaskor")
+                || volumeString.Contains("burkar")
+                || volumeString.Contains("påsar"))
             {
                 var splitString = volumeString.Split(' ');
                 var splitVolume = splitString[3].Split('m');
