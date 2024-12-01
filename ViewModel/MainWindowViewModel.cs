@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -65,6 +66,7 @@ namespace SystembolagetWebScraper.ViewModel
 
         public DelegateCommand ApplyCountryFilterCommand { get; }
         public DelegateCommand ApplyProductTypeFilterCommand { get; }
+        public DelegateCommand StartWebScrapeCommand { get; }
 
         public Product? ActiveProduct
         {
@@ -88,6 +90,13 @@ namespace SystembolagetWebScraper.ViewModel
             UniqueCountries.Add("All");
             ApplyCountryFilterCommand = new DelegateCommand(ApplyCountryFilter);
             ApplyProductTypeFilterCommand = new DelegateCommand(ApplyProductTypeFilter);
+
+            StartWebScrapeCommand = new DelegateCommand(StartWebScrape);
+        }
+
+        private async void StartWebScrape(object obj)
+        {
+            await webScraper.InitializeAsync();
         }
 
         private void ApplySort()

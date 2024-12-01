@@ -36,6 +36,10 @@
                        Width="Auto" Height="30"
                        HorizontalAlignment="Center"
                        Margin="10">
+                <Button Content="Start scan"
+                        FontSize="20"
+                        Command="{Binding StartWebScrapeCommand}"
+                        Margin="0,0,150,0"/>
                 <ComboBox Width="250"
                           Margin="20,0"
                           ItemsSource="{Binding SortOptions}" 

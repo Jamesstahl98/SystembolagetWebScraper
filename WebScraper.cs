@@ -29,21 +29,20 @@ namespace SystembolagetWebScraper
         private static string productPriceClassName = "css-a2frwy eqfj59s0";
         private static string productCountryVolumeAlcoholClassName = "css-rp7p3f e1g7jmpl0";
         private static string imageSource = "css-g98gbd e1ydxtsp0";
-        private static ProductType ProductType;
         private string _url = "https://www.systembolaget.se/sortiment/?p=";
         private HttpClient httpClient = new HttpClient();
 
         public string Url => _url;
         public static ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
 
-        public WebScraper()
+        public async Task InitializeAsync()
         {
-            Task.Run(async () => await ScrapeProductsAsync(Url));
+            await ScrapeProductsAsync(Url);
         }
 
         static async Task ScrapeProductsAsync(string url)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 try
                 {
@@ -77,14 +76,14 @@ namespace SystembolagetWebScraper
 
                                 var product = new Product(
                                     element.FindElement(By.XPath($".//p[@class='{brandNameClassName}']")).Text,
-                                    GetProductName(element),
+                                    await GetProductNameAsync(element),
                                     productTypeString,
-                                    GetProductType(productTypeString),
-                                    GetPrice(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
+                                    await GetProductTypeAsync(productTypeString),
+                                    await GetPriceAsync(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
-                                    GetVolume(countryVolumeAlcoholElements[1].Text),
+                                    await GetVolume(countryVolumeAlcoholElements[1].Text),
                                     Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0]),
-                                    GetImageSource(element.FindElement(By.XPath($".//img[@class='{imageSource}']"))),
+                                    await GetImageSourceAsync(element.FindElement(By.XPath($".//img[@class='{imageSource}']"))),
                                     element.GetAttribute("href")
                                 );
 
@@ -103,48 +102,73 @@ namespace SystembolagetWebScraper
             });
         }
 
-        public static ProductType GetProductType(string productTypeString)
+        static async Task<ProductType> GetProductTypeAsync(string productTypeString)
         {
-            if (productTypeString.Contains("ÖL"))
+            return await Task.Run(() =>
             {
-                return ProductType.Beer;
-            }
-            else if (productTypeString.Contains("VITT VIN"))
-            {
-                return ProductType.White_Wine;
-            }
-            else if (productTypeString.Contains("RÖTT VIN"))
-            {
-                return ProductType.Red_Wine;
-            }
-            else if (productTypeString.Contains("CIDER"))
-            {
-                return ProductType.Cider;
-            }
-            else if (productTypeString.Contains("WHISKY"))
-            {
-                return ProductType.Whiskey;
-            }
-            else if (productTypeString.Contains("MOUSSERANDE"))
-            {
-                return ProductType.SparklingWine;
-            }
-            else if (productTypeString.Contains("LIKÖR"))
-            {
-                return ProductType.Liqueur;
-            }
-            else if (productTypeString.Contains("VODKA"))
-            {
-                return ProductType.Vodka;
-            }
-            return ProductType.Other;
-
+                if (productTypeString.Contains("ÖL"))
+                {
+                    return ProductType.Beer;
+                }
+                else if (productTypeString.Contains("VITT VIN"))
+                {
+                    return ProductType.White_Wine;
+                }
+                else if (productTypeString.Contains("RÖTT VIN"))
+                {
+                    return ProductType.Red_Wine;
+                }
+                else if (productTypeString.Contains("CIDER"))
+                {
+                    return ProductType.Cider;
+                }
+                else if (productTypeString.Contains("WHISKY"))
+                {
+                    return ProductType.Whiskey;
+                }
+                else if (productTypeString.Contains("MOUSSERANDE"))
+                {
+                    return ProductType.SparklingWine;
+                }
+                else if (productTypeString.Contains("LIKÖR"))
+                {
+                    return ProductType.Liqueur;
+                }
+                else if (productTypeString.Contains("VODKA"))
+                {
+                    return ProductType.Vodka;
+                }
+                return ProductType.Other;
+            });
         }
-        public static string? GetProductName(IWebElement productElement)
+        static async Task<string?> GetProductNameAsync(IWebElement productElement)
+        {
+            await Task.Run(()
+                =>
+            {
+                try
+                {
+                    var element = productElement.FindElement(By.XPath($".//p[@class='{productNameClassName}']"));
+                    return element.Text;
+                }
+                catch (NoSuchElementException)
+                {
+                    return null;
+                }
+            });
+            return null;
+        }
+
+        static async Task<string?> GetImageSourceAsync(IWebElement imageElement)
         {
             try
             {
-                return productElement.FindElement(By.XPath($".//p[@class='{productNameClassName}']")).Text;
+                var srcSet = await Task.Run(() => imageElement.GetAttribute("srcset"));
+                if (srcSet[0] == '/')
+                {
+                    return null;
+                }
+                return srcSet.Split(' ')[0];
             }
             catch
             {
@@ -152,43 +176,34 @@ namespace SystembolagetWebScraper
             }
         }
 
-        public static string? GetImageSource(IWebElement imageElement)
+        static async Task<string> RemoveWhitespaceAsync(string source)
         {
-            if (imageElement.GetAttribute("srcset")[0] == '/')
-            {
-                return null;
-            }
-            return imageElement.GetAttribute("srcset").Split(' ')[0];
+            return await Task.Run(() => new string(source.Where(c => !char.IsWhiteSpace(c)).ToArray()));
         }
 
-        public static string RemoveWhitespace(string source)
-        {
-            return new string(source.Where(c => !char.IsWhiteSpace(c)).ToArray());
-        }
-
-        public static int GetVolume(string volumeString)
+        static async Task<int> GetVolume(string volumeString)
         {
             if (volumeString.Contains("flaskor"))
             {
                 var splitString = volumeString.Split(' ');
                 var splitVolume = splitString[3].Split('m');
-                return Int32.Parse(splitString[0]) * Int32.Parse(splitVolume[0]);
+                return await Task.Run(() => Int32.Parse(splitString[0]) * Int32.Parse(splitVolume[0]));
             }
             else
             {
-                return Int32.Parse(RemoveWhitespace(volumeString.Split('m')[0]));
+                return Int32.Parse(await RemoveWhitespaceAsync(volumeString.Split('m')[0]));
             }
         }
 
-        public static float GetPrice(string priceString)
+        static async Task<float> GetPriceAsync(string priceString)
         {
             if (priceString.Contains(':'))
             {
-                return Single.Parse(RemoveWhitespace(priceString.Split(':')[0]));
+                return Single.Parse(await RemoveWhitespaceAsync(priceString.Split(':')[0]));
             }
             else
             {
-                return Single.Parse(RemoveWhitespace(priceString.Split('*')[0]));
+                return Single.Parse(await RemoveWhitespaceAsync(priceString.Split('*')[0]));
             }
         }
     }
