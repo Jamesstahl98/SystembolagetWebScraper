@@ -18,7 +18,6 @@ namespace SystembolagetWebScraper.ViewModel
     internal class MainWindowViewModel : ViewModelBase
     {
         private WebScraper webScraper;
-        private string _selectedSortOption;
         private ICollectionView _productsView;
         private Product? _activeProduct;
 
@@ -32,35 +31,6 @@ namespace SystembolagetWebScraper.ViewModel
             {
                 _productsView = value;
                 RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<string> SortOptions { get; } = new ObservableCollection<string>
-        {
-            "Brand Name (Ascending)",
-            "Brand Name (Descending)",
-            "Country (Ascending)",
-            "Country (Descending)",
-            "Volume (Ascending)",
-            "Volume (Descending)",
-            "Alcohol (Ascending)",
-            "Alcohol (Descending)",
-            "Price (Ascending)",
-            "Price (Descending)",
-            "APK (Ascending)",
-            "APK (Descending)"
-        };
-        public string SelectedSortOption
-        {
-            get => _selectedSortOption;
-            set
-            {
-                if (_selectedSortOption != value)
-                {
-                    _selectedSortOption = value;
-                    RaisePropertyChanged();
-                    ApplySort();
-                }
             }
         }
 
@@ -85,8 +55,6 @@ namespace SystembolagetWebScraper.ViewModel
 
             Products.CollectionChanged += OnProductsCollectionChanged;
 
-            SelectedSortOption = SortOptions[0];
-
             UniqueCountries.Add("All");
             ApplyCountryFilterCommand = new DelegateCommand(ApplyCountryFilter);
             ApplyProductTypeFilterCommand = new DelegateCommand(ApplyProductTypeFilter);
@@ -97,53 +65,6 @@ namespace SystembolagetWebScraper.ViewModel
         private async void StartWebScrape(object obj)
         {
             await webScraper.InitializeAsync();
-        }
-
-        private void ApplySort()
-        {
-            if (ProductsView == null) return;
-
-            ProductsView.SortDescriptions.Clear();
-
-            switch (SelectedSortOption)
-            {
-                case "Brand Name (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("BrandName", ListSortDirection.Ascending));
-                    break;
-                case "Brand Name (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("BrandName", ListSortDirection.Descending));
-                    break;
-                case "Country (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Country", ListSortDirection.Ascending));
-                    break;
-                case "Country (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Country", ListSortDirection.Descending));
-                    break;
-                case "Volume (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Volume", ListSortDirection.Ascending));
-                    break;
-                case "Volume (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Volume", ListSortDirection.Descending));
-                    break;
-                case "Alcohol (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Alcohol", ListSortDirection.Ascending));
-                    break;
-                case "Alcohol (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Alcohol", ListSortDirection.Descending));
-                    break;
-                case "Price (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Price", ListSortDirection.Ascending));
-                    break;
-                case "Price (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("Price", ListSortDirection.Descending));
-                    break;
-                case "APK (Ascending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("APK", ListSortDirection.Ascending));
-                    break;
-                case "APK (Descending)":
-                    ProductsView.SortDescriptions.Add(new SortDescription("APK", ListSortDirection.Descending));
-                    break;
-            }
         }
 
         private void OnProductsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)

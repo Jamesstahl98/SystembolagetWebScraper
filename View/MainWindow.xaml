@@ -40,10 +40,6 @@
                         FontSize="20"
                         Command="{Binding StartWebScrapeCommand}"
                         Margin="0,0,150,0"/>
-                <ComboBox Width="250"
-                          Margin="20,0"
-                          ItemsSource="{Binding SortOptions}" 
-                          SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}" />
                 <Menu>
                     <MenuItem Header="Filters">
                         <MenuItem Header="Countries"
@@ -77,50 +73,21 @@
                     </MenuItem>
                 </Menu>
             </DockPanel>
-
-            <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="130"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="100"/>
-            </Grid.ColumnDefinitions>
-
-            <TextBlock Text="Brand Name" Grid.Column="0" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-            <TextBlock Text="Country" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-            <TextBlock Text="Volume" Grid.Column="2" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-            <TextBlock Text="Alcohol" Grid.Column="3" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-            <TextBlock Text="Price" Grid.Column="4" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-            <TextBlock Text="APK" Grid.Column="5" HorizontalAlignment="Left" FontWeight="Bold" Margin="5"/>
-        </Grid>
-
-            <ListBox ItemsSource="{Binding ProductsView}"
-                 SelectedItem="{Binding ActiveProduct}"
-                 Grid.Row="2">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="130"/>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="100"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="{Binding BrandName}" Grid.Column="0" Margin="5"/>
-                            <TextBlock Text="{Binding Country}" Grid.Column="1" Margin="5"/>
-                            <TextBlock Text="{Binding Volume}" Grid.Column="2" Margin="5"/>
-                            <TextBlock Text="{Binding Alcohol}" Grid.Column="3" Margin="5"/>
-                            <TextBlock Text="{Binding Price}" Grid.Column="4" Margin="5"/>
-                            <TextBlock Text="{Binding APK}" Grid.Column="5" Margin="5"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <DataGrid ItemsSource="{Binding ProductsView}"
+                      Grid.Row="2"
+                      AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Brand Name"
+                                        Binding="{Binding BrandName}"/>
+                    <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}"/>
+                    <DataGridTextColumn Header="Country" Binding="{Binding Country}"/>
+                    <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
+                    <DataGridTextColumn Header="Product Type" Binding="{Binding ProductType}"/>
+                    <DataGridTextColumn Header="Volume" Binding="{Binding Volume}"/>
+                    <DataGridTextColumn Header="Alcohol Percentage" Binding="{Binding Alcohol}"/>
+                    <DataGridTextColumn Header="APK" Binding="{Binding APK}"/>
+                </DataGrid.Columns>
+            </DataGrid>
         </Grid>
 
         <Grid Grid.Column="1">
