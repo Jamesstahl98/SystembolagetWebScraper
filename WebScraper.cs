@@ -16,6 +16,7 @@ using SeleniumExtras.WaitHelpers;
 using SystembolagetWebScraper.Model;
 using System.Collections.ObjectModel;
 using System.Collections;
+using System.Globalization;
 
 namespace SystembolagetWebScraper
 {
@@ -92,8 +93,8 @@ namespace SystembolagetWebScraper
                                     await GetProductTypeAsync(productTypeString),
                                     await GetPriceAsync(element.FindElement(By.XPath($".//p[@class='{productPriceClassName}']")).Text),
                                     countryVolumeAlcoholElements[0].Text,
-                                    await GetVolume(countryVolumeAlcoholElements[1].Text),
-                                    Single.Parse(countryVolumeAlcoholElements[2].Text.Split(' ')[0]),
+                                    await GetVolumeAsync(countryVolumeAlcoholElements[1].Text),
+                                    GetAlcohol(countryVolumeAlcoholElements[2].Text),
                                     await GetImageSourceAsync(element.FindElement(By.XPath($".//img[@class='{imageSourceClassName}']"))),
                                     element.GetAttribute("href")
                                 );
@@ -154,10 +155,10 @@ namespace SystembolagetWebScraper
         }
         static async Task<string?> GetProductNameAsync(IWebElement productElement)
         {
-            var bla = await Task.Run(() => productElement.FindElements(By.XPath($".//p[@class='{productNameClassName}']")));
-            if (bla.Count > 0)
+            var pruductName = await Task.Run(() => productElement.FindElements(By.XPath($".//p[@class='{productNameClassName}']")));
+            if (pruductName.Count > 0)
             {
-                return bla[0].Text;
+                return pruductName[0].Text;
             }
             return null;
         }
@@ -184,7 +185,7 @@ namespace SystembolagetWebScraper
             return await Task.Run(() => new string(source.Where(c => !char.IsWhiteSpace(c)).ToArray()));
         }
 
-        static async Task<int> GetVolume(string volumeString)
+        static async Task<int> GetVolumeAsync(string volumeString)
         {
             if (volumeString.Contains("flaskor")
                 || volumeString.Contains("burkar")
@@ -210,6 +211,16 @@ namespace SystembolagetWebScraper
             {
                 return Single.Parse(await RemoveWhitespaceAsync(priceString.Split('*')[0]));
             }
+        }
+
+        static float GetAlcohol(string alcoholString)
+        {
+            if(alcoholString.Contains(','))
+            {
+                var splitString = alcoholString.Split(',');
+                return Single.Parse(splitString[0]+ '.' + splitString[1].Split(' ')[0]);
+            }
+            return Single.Parse(alcoholString.Split(' ')[0]);
         }
     }
 }

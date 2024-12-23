@@ -75,10 +75,10 @@
             </DockPanel>
             <DataGrid ItemsSource="{Binding ProductsView}"
                       Grid.Row="2"
-                      AutoGenerateColumns="False">
+                      AutoGenerateColumns="False"
+                      SelectedItem="{Binding ActiveProduct}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Brand Name"
-                                        Binding="{Binding BrandName}"/>
+                    <DataGridTextColumn Header="Brand Name" Binding="{Binding BrandName}"/>
                     <DataGridTextColumn Header="Product Name" Binding="{Binding ProductName}"/>
                     <DataGridTextColumn Header="Country" Binding="{Binding Country}"/>
                     <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
